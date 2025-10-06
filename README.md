@@ -20,4 +20,4 @@ Exam group project for group 1.
 
 ### Problem 5: Solving a Real-World Problem Using Reinforcement Learning
 
--
+-   Sebastian
