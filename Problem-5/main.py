@@ -1,10 +1,24 @@
-from typing import Optional
-from collections import defaultdict
 import numpy as np
 import gymnasium as gym
 from matplotlib import pyplot as plt
 
-# Creating the frozen lake environment for the reinforcement learning agent
+"""
+Creating the frozen lake environment using gymnasium
+
+there are 2 different maps, one for the 4x4 and one for the 8x8 grid. You can also create a custom map by changing the description parameter to a list of strings.
+
+S = starting point, safe
+F = frozen surface, safe
+H = hole, terminal, no reward
+G = goal, terminal, reward +1
+
+4x4 map:
+S F F F
+F H F H
+F F F H
+H F F G
+
+"""
 env = gym.make(
     "FrozenLake-v1",
     map_name="4x4",         # Use standard 4x4 map
@@ -65,7 +79,8 @@ class FrozenLakeAgent:
         else:
             # Exploit: choose best action from Q-table
             return np.argmax(self.q_table[obs])
-        
+
+    # Update Q-value based on experience from environment    
     def update(
         self, 
         obs: int,
@@ -105,12 +120,12 @@ class FrozenLakeAgent:
         self.epsilon = max(self.final_epsilon, self.epsilon * self.epsilon_decay)
 
 
-# Training parameters
+# Training parameters (This definetly needs to be tuned to get good performance)
 EPISODES = 15000           # How many games to play
 LEARNING_RATE = 0.1        # How fast to learn (α)
 DISCOUNT_FACTOR = 0.99     # Value future rewards (γ) 
-INITIAL_EPSILON = 1.0      # Start with 100% exploration
-FINAL_EPSILON = 0.01       # End with 1% exploration  
+INITIAL_EPSILON = 1.0      # Start with 100% exploration for now
+FINAL_EPSILON = 0.01       # Ends with 1% exploration for now
 EPSILON_DECAY = 0.9995     # How fast to reduce exploration
 
 agent = FrozenLakeAgent(
@@ -166,6 +181,88 @@ if __name__ == "__main__":
     
     print("Training completed!")
 
+# Evaluate the trained agent to get results and see if it is actually learning something
+def evaluate_trained_agent(agent, env, num_episodes=1000):
+    """Evaluate the trained Q-learning agent without exploration."""
+    successes = 0
+    
+    for _ in range(num_episodes):
+        obs, _ = env.reset()
+        done = False
+        
+        while not done:
+            # Use greedy policy (no exploration)  
+            action = np.argmax(agent.q_table[obs])
+            obs, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
+            
+            if done and reward > 0:
+                successes += 1
+                
+    success_rate = successes / num_episodes
+    print(f"Q-learning Agent Success Rate: {success_rate:.3f} ({success_rate*100:.1f}%)")
+    return success_rate
+
+# We need to compare our q-learning agent against some baselines such a random policy to see if it is actually learning anything useful
+def evaluate_random_baseline(env, num_episodes=1000):
+    """Evaluate random policy baseline."""
+    print("Testing Random Policy Baseline...")
+    successes = 0
+    
+    for _ in range(num_episodes):
+        obs, _ = env.reset()
+        done = False
+        steps = 0
+        
+        while not done and steps < 200:  # Prevent infinite loops
+            action = env.action_space.sample()  # Random action
+            obs, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
+            steps += 1
+            
+            if done and reward > 0:
+                successes += 1
+                
+    success_rate = successes / num_episodes
+    print(f"Random Policy Success Rate: {success_rate:.3f} ({success_rate*100:.1f}%)")
+    return success_rate
+
+# We need to compare our q-learning agent against some baselines such as a heuristic policy to see if it is actually learning anything useful
+def evaluate_heuristic_baseline(env, num_episodes=1000):
+    """Evaluate simple heuristic baseline (attempt shortest deterministic route)."""
+    print("Testing Simple Heuristic Baseline...")
+    print("Strategy: Always try to move Down or Right toward goal")
+    successes = 0
+    
+
+    for episode in range(num_episodes):
+        # Reset environment for new episode, we need this to get the agent back to the starting positions S after each episode
+        obs, _ = env.reset()
+        done = False
+        steps = 0
+        
+        # Limit steps to avoid infinite loops
+        while not done and steps < 200:
+            # Simple heuristic: alternate between Down (1) and Right (2)
+            # This fails on slippery surface because it doesn't account for holes
+            if steps % 2 == 0:
+                action = 1  # Down
+            else:
+                action = 2  # Right
+
+            # Take action in environment     
+            obs, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
+            steps += 1
+            
+            if done and reward > 0:
+                successes += 1
+                
+    success_rate = successes / num_episodes
+    print(f"Heuristic Policy Success Rate: {success_rate:.3f} ({success_rate*100:.1f}%)")
+    return success_rate
+
+
 """
 
 Visualizing Training Progress using matplotlib
@@ -219,9 +316,29 @@ axs[2].set_xlabel("Step")
 
 
 plt.tight_layout()
-#plt.show()
+plt.show()
 
-# Add this after training to inspect Q-table:
+# Evaluate final agent performance and compare with baselines
+print("\n FINAL EVALUATION & BASELINE COMPARISON")
+print("="*60)
+final_success_rate = evaluate_trained_agent(agent, env, num_episodes=1000)
+
+print("\n BASELINE COMPARISONS")
+print("="*50)
+random_success = evaluate_random_baseline(env, num_episodes=1000)
+heuristic_success = evaluate_heuristic_baseline(env, num_episodes=1000)
+
+print("\n PERFORMANCE SUMMARY") 
+print("="*50)
+print(f"Q-learning Agent:     {final_success_rate:.3f} ({final_success_rate*100:.1f}%)")
+print(f"Random Baseline:      {random_success:.3f} ({random_success*100:.1f}%)")  
+print(f"Heuristic Baseline:   {heuristic_success:.3f} ({heuristic_success*100:.1f}%)")
+if random_success > 0:
+    print(f"Improvement over Random:    {final_success_rate/random_success:.1f}x better")
+if heuristic_success > 0:
+    print(f"Improvement over Heuristic: {final_success_rate/heuristic_success:.1f}x better")
+
+# Debugging the q table and parameters had some issues with it
+print("\n Q-TABLE ANALYSIS")
+print("="*30)
 print(agent.q_table)
-print(agent.lr)
-print(agent.discount_factor)
