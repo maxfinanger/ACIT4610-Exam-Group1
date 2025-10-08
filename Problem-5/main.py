@@ -21,8 +21,10 @@ H F F G
 """
 env = gym.make(
     "FrozenLake-v1",
-    map_name="4x4",         # Use standard 4x4 map
-    is_slippery=True        # Slippery warehouse floor
+    map_name="4x4",           # Use standard 4x4 map
+    is_slippery=True,         # Slippery warehouse floor
+    success_rate=1.0/3.0,     # 1/3 chance of going in intended direction
+    reward_schedule=(1, 0, 0) # Reward of 1 for reaching goal, 0 otherwise
 )
 
 # Q-learning agent for the Frozen Lake environment
@@ -137,7 +139,7 @@ agent = FrozenLakeAgent(
     discount_factor=DISCOUNT_FACTOR
 )
 
-# Training loop (add this before the visualization)
+# Training loop for the Q-learning agent
 if __name__ == "__main__":
     # Track training progress
     episode_rewards = []
@@ -330,11 +332,11 @@ heuristic_success = evaluate_heuristic_baseline(env, num_episodes=1000)
 
 print("\n PERFORMANCE SUMMARY") 
 print("="*50)
-print(f"Q-learning Agent:     {final_success_rate:.3f} ({final_success_rate*100:.1f}%)")
-print(f"Random Baseline:      {random_success:.3f} ({random_success*100:.1f}%)")  
-print(f"Heuristic Baseline:   {heuristic_success:.3f} ({heuristic_success*100:.1f}%)")
+print(f"Q-learning Agent: {final_success_rate:.3f} ({final_success_rate*100:.1f}%)")
+print(f"Random Baseline: {random_success:.3f} ({random_success*100:.1f}%)")  
+print(f"Heuristic Baseline: {heuristic_success:.3f} ({heuristic_success*100:.1f}%)")
 if random_success > 0:
-    print(f"Improvement over Random:    {final_success_rate/random_success:.1f}x better")
+    print(f"Improvement over Random: {final_success_rate/random_success:.1f}x better")
 if heuristic_success > 0:
     print(f"Improvement over Heuristic: {final_success_rate/heuristic_success:.1f}x better")
 
