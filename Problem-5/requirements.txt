@@ -1,0 +1,6 @@
+# Q-learning Warehouse Robot Navigation
+# Requirements for the project
+
+gymnasium==1.2.1
+numpy>=1.21.0
+matplotlib>=3.5.0
