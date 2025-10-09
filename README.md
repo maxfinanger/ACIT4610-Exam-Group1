@@ -12,7 +12,7 @@ Exam group project for group 1.
 
 ### Problem-3: Solving 0–1 Knapsack Problem Using Bees Algorithm (BA)
 
--
+- Thomas
 
 ### Problem-4: Spam Detection from Text Messages/Emails Using Artificial Immune Systems (AIS) – Negative Selection Algorithm (NSA)
 
