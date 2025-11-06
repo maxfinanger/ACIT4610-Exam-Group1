@@ -34,6 +34,7 @@ Requirements:
 - gymnasium 
 - numpy
 - matplotlib
+- seaborn
 
 ## Implementation notes
 
@@ -49,7 +50,7 @@ Core algorithm details:
 - Policy: ε-greedy (with decay: linear or exponential)
 - Update rule: Q(s,a) ← Q(s,a) + α * (r + γ * max_a' Q(s',a') - Q(s,a))
 
-hyperparameters (starting point):
+hyperparameters 4x4(starting point):
 - α (learning rate): 0.1
 - γ (discount factor): 0.99
 - ε start: 1.0, ε end: 0.01, decay over 10_000 episodes
@@ -57,7 +58,7 @@ hyperparameters (starting point):
 Edge cases to consider:
 - Episodes that end immediately in a hole
 - Long episodes when agent loops; consider max steps per episode
-- Very sparse reward in larger grids (8×8) — may need more training episodes
+- Very sparse reward in larger grids (8×8) may need more training episodes
 
 ## Evaluation
 
@@ -68,7 +69,7 @@ Metrics we track:
 
 Baselines to compare against:
 - Random policy baseline
-- Simple deterministic heuristic (e.g., always move toward goal); can fail under slip
+- Heuristic, where the agent tries to move down and to the right
 
 Visualization:
 - Plot episode reward and a moving average (window=100)
