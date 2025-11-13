@@ -1,18 +1,15 @@
-# Problem 3: 0-1 Knapsack Problem Using Bees Algorithm
+# Problem 3: Bees Algorithm for 0-1 Knapsack
 
-## Installation
+## Requirements
 
 ```bash
-pip install numpy pandas matplotlib jupyter
+pip install -r ../requirements.txt
 ```
 
-# How to Run
-
-1. Open the notebook:
+## Running the Code
 
 ```bash
-cd Problem-3
 jupyter notebook problem3.ipynb
 ```
 
-Run all cells in order (Cell → Run All)
+Run all cells sequentially.

@@ -1,0 +1,15 @@
+# Problem 4: Negative Selection Algorithm for Spam Detection
+
+## Requirements
+
+```bash
+pip install -r ../requirements.txt
+```
+
+## Running the Code
+
+```bash
+jupyter notebook New_NSA_2.ipynb
+```
+
+Run all cells in order. Dataset should be in `Data/SMSSpamCollection`.
