@@ -1,4 +1,4 @@
-# Problem 5: Q-Learning for Frozen Lake
+# Problem 3: Bees Algorithm for 0-1 Knapsack
 
 ## Requirements
 
@@ -9,7 +9,7 @@ pip install -r ../requirements.txt
 ## Running the Code
 
 ```bash
-jupyter notebook main.ipynb
+jupyter notebook problem3.ipynb
 ```
 
 Run all cells sequentially.
