@@ -9,7 +9,7 @@ pip install -r ../requirements.txt
 ## Running the Code
 
 ```bash
-jupyter notebook New_NSA_2.ipynb
+jupyter notebook NSA.ipynb
 ```
 
 Run all cells in order. Dataset should be in `Data/SMSSpamCollection`.
